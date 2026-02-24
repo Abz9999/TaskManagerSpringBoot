@@ -1,14 +1,6 @@
 services:
-
-  db:
-
-    image: postgres:latest
-
+  app:
+    build: .
+    container_name: task-manager-app
     ports:
-      - "5432:5432"
-
-    restart: always
-
-
-    environment:
-      POSTGRES_PASSWORD: changemeinprod!
+      - "8080:8080"

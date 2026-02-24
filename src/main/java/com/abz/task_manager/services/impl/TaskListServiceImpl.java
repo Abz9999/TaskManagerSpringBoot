@@ -1,6 +1,5 @@
 package com.abz.task_manager.services.impl;
 
-import com.abz.task_manager.controllers.GlobalExceptionHandler;
 import com.abz.task_manager.domain.entities.TaskList;
 import com.abz.task_manager.repositories.TaskListRepositories;
 import com.abz.task_manager.services.TaskListService;
@@ -9,11 +8,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 public class TaskListServiceImpl implements TaskListService {
@@ -41,7 +39,7 @@ public class TaskListServiceImpl implements TaskListService {
 
         }
         LocalDateTime now = LocalDateTime.now();
-        return taskListRepositories.save(new TaskList(null, taskList.getTitle(), taskList.getDescription(), now, now, null));
+        return taskListRepositories.save(new TaskList(null, taskList.getTitle(), taskList.getDescription(), now, now, new ArrayList<>()));
 
 
     }
@@ -49,36 +47,29 @@ public class TaskListServiceImpl implements TaskListService {
     @Transactional
     @Override
     public TaskList updateTaskList(UUID taskListId, TaskList taskList) {
-        if (taskList.getId() == null) {
-            throw new IllegalArgumentException("Task list id is required");
-
-        }
         if (taskList.getTitle() == null || taskList.getTitle().isBlank()) {
             throw new IllegalArgumentException("Task list title is required");
         }
-        if(taskList.getId() != taskListId) {
+        if (taskList.getId() != null && !taskList.getId().equals(taskListId)) {
             throw new IllegalArgumentException("attempting to change task list id");
         }
         LocalDateTime now = LocalDateTime.now();
-        TaskList existingTaskList = taskListRepositories.findById(taskListId).orElseThrow(() -> new IllegalArgumentException("task list id not found"));
+        TaskList existingTaskList = taskListRepositories.findById(taskListId)
+                .orElseThrow(() -> new EntityNotFoundException("task list id not found"));
         return taskListRepositories.save(new TaskList(taskListId, taskList.getTitle(), taskList.getDescription(), existingTaskList.getCreated(), now, taskList.getTasks()));
 
     }
 
     @Override
     public Optional<TaskList> findTaskListById(UUID id) {
-        Optional<TaskList> taskList = taskListRepositories.findById(id);
-
-
-        return taskList;
-
-
-
+        return taskListRepositories.findById(id);
     }
 
     @Override
     public void deleteTaskListById(UUID id) {
+        if (!taskListRepositories.existsById(id)) {
+            throw new EntityNotFoundException("task list id not found");
+        }
         taskListRepositories.deleteById(id);
-
     }
 }

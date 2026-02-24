@@ -4,12 +4,8 @@ import com.abz.task_manager.domain.entities.TaskList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface TaskListRepositories extends JpaRepository<TaskList, UUID> {
-    List<TaskList> id(UUID id);
-
-    void removeTaskListById(UUID id);
 }

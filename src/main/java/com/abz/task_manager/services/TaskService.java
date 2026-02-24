@@ -1,7 +1,6 @@
 package com.abz.task_manager.services;
 
 import com.abz.task_manager.domain.entities.Task;
-import com.abz.task_manager.domain.entities.TaskList;
 
 import java.util.List;
 import java.util.Optional;

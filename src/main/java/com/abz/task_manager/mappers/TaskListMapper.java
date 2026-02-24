@@ -8,5 +8,6 @@ import org.mapstruct.Mapper;
 public interface TaskListMapper {
 
     TaskListDto toDto(TaskList taskList);
+
     TaskList fromDto(TaskListDto taskListDto);
 }
